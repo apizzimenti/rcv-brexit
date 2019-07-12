@@ -1,0 +1,13 @@
+
+# J
+*.json
+*.swp
+.python-version
+.DS_Store
+.ipynb_checkpoints
+.vscode
+__pycache__/*
+figures/
+*.pkl
+data/*.txt
+data/*.pkl
