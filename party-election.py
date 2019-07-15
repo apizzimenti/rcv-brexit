@@ -2,7 +2,7 @@
 import json
 from collections import OrderedDict
 
-from Election import Election
+from Ranked import Election
 from util import riffle
 
 
@@ -88,7 +88,7 @@ for party in rankings:
         ballot = { "weight": 1, "ranking": rankings[party] }
         brexit.add_ballot(ballot)
 
-brexit.single_winner_rcv_simulation()
+brexit.single_winner_rcv()
 # brexit.sankey()
 
 with open("./data/winners.txt", "a") as f:

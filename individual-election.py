@@ -6,14 +6,14 @@ from math import log, log2
 from collections import Counter
 import random
 
-from Election import Election
+from Ranked import Election
 from util import riffle
 
 
 # Do we want to randomize exhaustible ballots?
 randomize = False
 
-# Here, we choose the way we weight each of the probabilities outlined in REFERENCE!!!
+# Here, we choose our weighting method, as outlined in (B.1).
 weighting_types = set([
     "intersection",
     "intersection-log2",
@@ -182,8 +182,6 @@ if randomize:
 # nuances that go into this weighting, especially if a plan isn't given a
 # ranking (by one of the parties).
 plans = ["B", "H", "K", "L", "O", "C", "D", "E", "G"]
-brexit = Election()
-brexit.add_candidates(plans)
 ballots = []
 
 mean_mps = []
@@ -207,11 +205,13 @@ for mp in mps:
     # Then we just sort the ballots and throw them into the election.
     mp_prefs = list(sorted(sum_weights, key=lambda g: -sum_weights[g]))
     ballot = { "weight": 1, "ranking": mp_prefs }
-    brexit.add_ballot(ballot)
+    ballots.append(ballot)
 
     # Some more interesting info.
     mean_mps.append(sum_weights)
     mean_rankings.append(tuple(mp_prefs))
+
+brexit = Election(candidates=plans, ballots=ballots)
 
 
 # Do a fun little activity where we return the mean MP and most common ranking
@@ -226,17 +226,11 @@ for mp in mean_mps:
 # Get the mode ballot ranking.
 mode = Counter(mean_rankings)
 
-"""
-print("average MP:")
-print(json.dumps(avg_mp, indent=2))
-print()
-print("most common ballot ranking:")
-print(mode.most_common()[0])
-"""
-
 # Run the simulation and spit out json to feed into https://sankey.csaladen.es/.
-brexit.single_winner_rcv_simulation()
+brexit.single_winner_rcv()
 brexit.sankey(f"./figures/{weighting_type}-sankey.json")
+
+print(brexit)
 
 # Write the winner (and whether the winner met the drop quota) to a file (for
 # simulation purposes).
